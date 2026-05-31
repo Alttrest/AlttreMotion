@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Printing - Fluid Particle Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <canvas id="intro-canvas"></canvas>
+
+    <div id="ui-layer">
+        <!-- Scene 1: Main Menu (Left) -->
+        <div id="scene-main" class="scene active">
+            <div class="content-box">
+                <h1>Geleceği Şekillendir</h1>
+                <p>Hayalinizdeki 3D tasarımları gerçeğe dönüştürün.</p>
+                <div class="btn-group">
+                    <button id="btn-products" class="glass-btn">Ürünler</button>
+                    <button id="btn-upload" class="glass-btn primary">Kendi Modelini Al</button>
+                    <button id="btn-design" class="glass-btn">Tasarım Baskı</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 2: Upload Zone (Right) -->
+        <div id="scene-upload" class="scene">
+            <input type="file" id="file-input" style="display: none;" accept=".stl">
+            <div id="drop-zone" class="drop-zone">
+                <!-- Drop zone outline and text overlay -->
+                <div class="drop-text" id="drop-text">Dosyayı Buraya At veya Tıkla (.stl)</div>
+            </div>
+            
+            <div id="controls" class="controls hidden">
+                <div class="control-group">
+                    <label>Renk Seçimi:</label>
+                    <div class="color-picker">
+                        <button class="color-btn" data-color="#00ffff" style="background: #00ffff;"></button>
+                        <button class="color-btn" data-color="#ff00ff" style="background: #ff00ff;"></button>
+                        <button class="color-btn" data-color="#ffffff" style="background: #ffffff;"></button>
+                        <button class="color-btn" data-color="#ffd700" style="background: #ffd700;"></button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Filament Durumu:</label>
+                    <select id="filament-select">
+                        <option value="liquid">Sıvı/Akışkan (Önizleme)</option>
+                        <option value="solid">Katı (PLA/ABS - Katılaşma)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="price-display" class="price-display hidden">
+                Tahmini Fiyat: <span id="price-value">0</span> TL
+            </div>
+        </div>
+
+    <!-- Scene 3: Products / Gallery (Left) -->
+    <div id="scene-products" class="scene">
+        <div class="content-box" style="width: 80%; max-width: 1000px; background: transparent; border: none; padding: 20px;">
+            <h2 style="font-size: 3rem; margin-bottom: 40px; text-shadow: 0 0 20px rgba(0,255,255,0.5);">Özel Ürünlerimiz</h2>
+            <div class="products-grid" style="pointer-events: auto;">
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/150/00ffff/000000?text=Model+1" alt="Ürün 1">
+                    <h3>Özel Tasarım Vazo</h3>
+                    <p style="margin-bottom: 0; color: #00ffff; font-weight: bold; font-size: 1.2rem;">250 TL</p>
+                </div>
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/150/ff00ff/000000?text=Model+2" alt="Ürün 2">
+                    <h3>Mimari Maket</h3>
+                    <p style="margin-bottom: 0; color: #ff00ff; font-weight: bold; font-size: 1.2rem;">1200 TL</p>
+                </div>
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/150/ffffff/000000?text=Model+3" alt="Ürün 3">
+                    <h3>Aksiyon Figürü</h3>
+                    <p style="margin-bottom: 0; color: #ffffff; font-weight: bold; font-size: 1.2rem;">450 TL</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scene 4: Footer (Down) -->
+    <div id="scene-footer" class="scene">
+        <div class="content-box" style="pointer-events: auto;">
+            <h2 style="margin-bottom: 20px; font-size: 2.5rem;">PROFF_3D</h2>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">Hayalinizdeki tasarımları gerçeğe dönüştürüyoruz.</p>
+            <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <p style="color: #00ffff; font-weight: bold; font-size: 1.3rem;">🚀 TÜM SİPARİŞLERDE KARGO BEDAVA!</p>
+                <p><strong>İletişim:</strong> info@proff3d.com</p>
+                <p><strong>Telefon:</strong> +90 555 123 45 67</p>
+                <p><strong>Adres:</strong> Teknoloji Vadisi, İnovasyon Sok. No: 42, İstanbul</p>
+            </div>
+            <p style="margin-top: 50px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">&copy; 2026 PROFF_3D. Tüm hakları saklıdır.</p>
+        </div>
+    </div>
+
+    <!-- Scene 5: Design Request -->
+    <div id="scene-design" class="scene" style="justify-content: center; text-align: center;">
+        <div class="content-box" style="pointer-events: auto; width: 80%; max-width: 600px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(0,255,255,0.5);">Özel Tasarım & Baskı</h2>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">Ne istediğinizi detaylıca anlatın, biz 3 boyutlu olarak modelleyip adresinize ücretsiz kargolayalım!</p>
+            <textarea id="design-request-text" rows="5" style="width: 100%; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2); font-family: 'Outfit', sans-serif; resize: none; margin-bottom: 20px;" placeholder="Örn: 15cm boyutunda, hareketli kolları olan bir robot figürü istiyorum..."></textarea>
+            <button class="glass-btn primary" style="width: 100%; font-weight: bold;">Talebi Gönder (Kargo Bedava)</button>
+        </div>
+    </div>
+</div>
+
+<div id="scroll-height" style="height: 300vh; pointer-events: none;"></div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
