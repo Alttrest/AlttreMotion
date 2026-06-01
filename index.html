@@ -20,6 +20,11 @@
     <div id="canvas-container"></div>
     <canvas id="intro-canvas"></canvas>
 
+    <!-- Global Onboarding Overlay -->
+    <div id="onboarding-text" style="position: fixed; top: 15%; left: 50%; transform: translateX(-50%); z-index: 5; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); font-size: 1.5rem; font-weight: 300; pointer-events: none; text-align: center; animation: pulse 2s infinite; transition: opacity 0.5s ease;">
+        ↓ Deneyimi Başlatmak İçin Aşağı Kaydırın ↓
+    </div>
+
     <div id="ui-layer">
         <!-- Scene 1: Main Menu (Left) -->
         <div id="scene-main" class="scene active">
@@ -27,9 +32,12 @@
                 <h1>Geleceği Şekillendir</h1>
                 <p>Hayalinizdeki 3D tasarımları gerçeğe dönüştürün.</p>
                 <div class="btn-group">
-                    <button id="btn-products" class="glass-btn">Ürünler</button>
-                    <button id="btn-upload" class="glass-btn primary">Kendi Modelini Al</button>
-                    <button id="btn-design" class="glass-btn">Tasarım Baskı</button>
+                    <button id="btn-products" class="glass-btn">← Ürünler</button>
+                    <button id="btn-design" class="glass-btn">Tasarım Baskı ↓</button>
+                    <button id="btn-upload" class="glass-btn primary">Kendi Modelini Al →</button>
+                </div>
+                <div style="margin-top: 30px; color: var(--text-secondary); font-size: 0.9rem; animation: pulse 2s infinite;">
+                    <p>Serbestçe gezmek için aşağı kaydırın ↓</p>
                 </div>
             </div>
         </div>
@@ -42,14 +50,17 @@
                 <div class="drop-text" id="drop-text">Dosyayı Buraya At veya Tıkla (.stl)</div>
             </div>
             
+            <div style="position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 0.9rem; pointer-events: none;">
+                ↑ Ana menüye dönmek için yukarı kaydırın
+            </div>
+            
             <div id="controls" class="controls hidden">
                 <div class="control-group">
                     <label>Renk Seçimi:</label>
-                    <div class="color-picker">
-                        <button class="color-btn" data-color="#00ffff" style="background: #00ffff;"></button>
-                        <button class="color-btn" data-color="#ff00ff" style="background: #ff00ff;"></button>
+                    <div class="color-picker" id="color-picker">
                         <button class="color-btn" data-color="#ffffff" style="background: #ffffff;"></button>
-                        <button class="color-btn" data-color="#ffd700" style="background: #ffd700;"></button>
+                        <button class="color-btn" data-color="#888888" style="background: #888888;"></button>
+                        <button class="color-btn" data-color="#222222" style="background: #222222;"></button>
                     </div>
                 </div>
                 <div class="control-group">
@@ -69,23 +80,13 @@
     <!-- Scene 3: Products / Gallery (Left) -->
     <div id="scene-products" class="scene">
         <div class="content-box" style="width: 80%; max-width: 1000px; background: transparent; border: none; padding: 20px;">
-            <h2 style="font-size: 3rem; margin-bottom: 40px; text-shadow: 0 0 20px rgba(0,255,255,0.5);">Özel Ürünlerimiz</h2>
-            <div class="products-grid" style="pointer-events: auto;">
-                <div class="product-card">
-                    <img src="https://via.placeholder.com/150/00ffff/000000?text=Model+1" alt="Ürün 1">
-                    <h3>Özel Tasarım Vazo</h3>
-                    <p style="margin-bottom: 0; color: #00ffff; font-weight: bold; font-size: 1.2rem;">250 TL</p>
-                </div>
-                <div class="product-card">
-                    <img src="https://via.placeholder.com/150/ff00ff/000000?text=Model+2" alt="Ürün 2">
-                    <h3>Mimari Maket</h3>
-                    <p style="margin-bottom: 0; color: #ff00ff; font-weight: bold; font-size: 1.2rem;">1200 TL</p>
-                </div>
-                <div class="product-card">
-                    <img src="https://via.placeholder.com/150/ffffff/000000?text=Model+3" alt="Ürün 3">
-                    <h3>Aksiyon Figürü</h3>
-                    <p style="margin-bottom: 0; color: #ffffff; font-weight: bold; font-size: 1.2rem;">450 TL</p>
-                </div>
+            <h2 style="font-size: 3rem; margin-bottom: 40px; text-shadow: 0 0 20px rgba(255,255,255,0.3);">Özel Ürünlerimiz</h2>
+            <div id="products-grid-container" class="products-grid" style="pointer-events: auto;">
+                <!-- Products injected by products.js -->
+            </div>
+            
+            <div style="margin-top: 40px; color: rgba(255,255,255,0.5); font-size: 0.9rem; text-align: center; width: 100%;">
+                ↑ Ana menüye dönmek için yukarı kaydırın
             </div>
         </div>
     </div>
@@ -96,27 +97,68 @@
             <h2 style="margin-bottom: 20px; font-size: 2.5rem;">PROFF_3D</h2>
             <p style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">Hayalinizdeki tasarımları gerçeğe dönüştürüyoruz.</p>
             <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 15px; text-align: left;">
-                <p style="color: #00ffff; font-weight: bold; font-size: 1.3rem;">🚀 TÜM SİPARİŞLERDE KARGO BEDAVA!</p>
+                <p style="color: #0ea5e9; font-weight: bold; font-size: 1.3rem;">🚀 TÜM SİPARİŞLERDE KARGO BEDAVA!</p>
                 <p><strong>İletişim:</strong> info@proff3d.com</p>
                 <p><strong>Telefon:</strong> +90 555 123 45 67</p>
                 <p><strong>Adres:</strong> Teknoloji Vadisi, İnovasyon Sok. No: 42, İstanbul</p>
             </div>
-            <p style="margin-top: 50px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">&copy; 2026 PROFF_3D. Tüm hakları saklıdır.</p>
+            <p style="margin-top: 50px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">&copy; 2026 PROFF_3D. Tüm hakları saklıdır. <span id="admin-login-btn" style="cursor: pointer; opacity: 0.3; margin-left: 10px;">🔒</span></p>
         </div>
     </div>
 
     <!-- Scene 5: Design Request -->
     <div id="scene-design" class="scene" style="justify-content: center; text-align: center;">
         <div class="content-box" style="pointer-events: auto; width: 80%; max-width: 600px;">
-            <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(0,255,255,0.5);">Özel Tasarım & Baskı</h2>
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.3);">Özel Tasarım & Baskı</h2>
             <p style="margin-bottom: 20px; color: var(--text-secondary);">Ne istediğinizi detaylıca anlatın, biz 3 boyutlu olarak modelleyip adresinize ücretsiz kargolayalım!</p>
             <textarea id="design-request-text" rows="5" style="width: 100%; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2); font-family: 'Outfit', sans-serif; resize: none; margin-bottom: 20px;" placeholder="Örn: 15cm boyutunda, hareketli kolları olan bir robot figürü istiyorum..."></textarea>
-            <button class="glass-btn primary" style="width: 100%; font-weight: bold;">Talebi Gönder (Kargo Bedava)</button>
+            <button type="submit" class="glass-btn primary" style="width: 100%; border-radius: 5px;">Gönder 🚀 TÜM SİPARİŞLERDE KARGO BEDAVA!</button>
+
+            <div style="margin-top: 30px; color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                ↑ Ana menüye dönmek için yukarı kaydırın
+            </div>
         </div>
     </div>
 </div>
 
-<div id="scroll-height" style="height: 300vh; pointer-events: none;"></div>
+<!-- Admin Modal Overlay -->
+<div id="admin-modal" class="hidden" style="position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(11, 15, 25, 0.95); z-index: 1000; backdrop-filter: blur(10px); pointer-events: auto; display: flex; justify-content: center; align-items: center; padding: 20px;">
+    <div class="content-box" style="width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: left; position: relative;">
+        <button id="admin-close" style="position: absolute; top: 15px; right: 20px; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        <h2 style="font-size: 2rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">Yönetim Paneli</h2>
+        
+        <!-- Login Section -->
+        <div id="admin-login-section" style="text-align: center;">
+            <p style="margin-bottom: 20px;">Lütfen yönetici şifrenizi girin.</p>
+            <input type="password" id="admin-pwd" placeholder="Şifre" style="width: 100%; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2); font-family: 'Outfit', sans-serif; margin-bottom: 20px; text-align: center; font-size: 1.2rem;">
+            <button id="btn-login-submit" class="glass-btn primary" style="width: 100%;">Giriş Yap</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="admin-dash-section" class="hidden">
+            <h3 style="margin-bottom: 15px; color: var(--accent);">Yeni Ürün Ekle</h3>
+            <form id="add-product-form" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 25px;">
+                <input type="text" id="p-title" placeholder="Ürün Adı" required style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                <input type="text" id="p-desc" placeholder="Ürün Açıklaması (Detaylı)" required style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                <input type="number" id="p-price" placeholder="Fiyat (TL)" required style="padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                <div style="position: relative; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); padding: 12px; display: flex; align-items: center; justify-content: space-between; overflow: hidden;">
+                    <span id="p-image-name" style="color: rgba(255,255,255,0.5); font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%;">Bilgisayardan Görsel Seç... (İsteğe Bağlı)</span>
+                    <input type="file" id="p-image-file" accept="image/*" style="opacity: 0; position: absolute; top:0; left:0; width:100%; height:100%; cursor: pointer;">
+                    <span style="background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem;">Gözat</span>
+                </div>
+                <button type="submit" class="glass-btn primary">Ürünü Ekle</button>
+            </form>
+
+            <h3 style="margin-bottom: 15px; color: var(--accent);">Yayındaki Ürünler</h3>
+            <div id="admin-products-list" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Dynamically injected list items -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="scroll-height" style="height: 400vh; pointer-events: none;"></div>
+    <script src="products.js"></script>
     <script type="module" src="script.js"></script>
 </body>
 </html>

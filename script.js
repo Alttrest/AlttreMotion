@@ -74,7 +74,7 @@ function preloadImages() {
     for (let i = 1; i <= frameCount; i++) {
         const img = new Image();
         const paddedIndex = String(i).padStart(3, '0');
-        img.src = `images/kare_${paddedIndex}.jpg`;
+        img.src = `assets/images/kare_${paddedIndex}.jpg`;
         img.onload = () => {
             loadedImagesCount++;
             const percent = Math.floor((loadedImagesCount / frameCount) * 100);
@@ -163,18 +163,18 @@ function init() {
     preloadImages();
 
     // 1.5 Add Studio Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0x00ffff, 0.9);
-    dirLight1.position.set(200, 200, 100);
+    const dirLight1 = new THREE.DirectionalLight(0xbae6fd, 1.2); // Ice Blue
+    dirLight1.position.set(10, 10, 10);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0xff00ff, 0.65);
-    dirLight2.position.set(-200, 100, -100);
+    const dirLight2 = new THREE.DirectionalLight(0xfef08a, 0.9); // Warm White
+    dirLight2.position.set(-10, -10, 10);
     scene.add(dirLight2);
 
-    const pointLight = new THREE.PointLight(0xffffff, 0.8, 200);
+    const pointLight = new THREE.PointLight(0xffffff, 1.0, 200);
     pointLight.position.set(150, 50, 50);
     scene.add(pointLight);
 
@@ -301,13 +301,14 @@ function createParticles() {
     const texture = new THREE.CanvasTexture(canvas);
 
     const material = new THREE.PointsMaterial({
-        color: 0x00ffff,
-        size: 0.8,
+        size: 0.05,
+        color: 0xf8fafc, // White/Slate base
         transparent: true,
-        opacity: 0, // Start invisible, fade in on scroll Zone 2!
+        opacity: 0,
         map: texture,
         blending: THREE.AdditiveBlending,
-        depthWrite: false
+        depthWrite: false,
+        sizeAttenuation: true
     });
 
     particles = new THREE.Points(geometry, material);
@@ -425,31 +426,37 @@ function setupUI() {
     const btnUpload = document.getElementById('btn-upload');
     const btnProducts = document.getElementById('btn-products');
     const btnDesign = document.getElementById('btn-design');
+    const fileInput = document.getElementById('file-input');
+    const sceneMain = document.getElementById('scene-main');
 
-    // "Kendi Modelini Al" -> activePath = 'upload', scroll to bottom
-    btnUpload.addEventListener('click', () => {
-        activePath = 'upload';
-        window.scrollTo({
-            top: 2 * window.innerHeight,
-            behavior: 'smooth'
+    // "Kendi Modelini Al" button -> activePath = 'upload', scroll to bottom
+    if (btnUpload) {
+        btnUpload.addEventListener('click', () => {
+            activePath = 'upload';
+            window.scrollTo({
+                top: 3 * window.innerHeight,
+                behavior: 'smooth'
+            });
         });
-    });
+    }
 
-    // "Ürünler" button -> activePath = 'products', scroll to bottom
-    btnProducts.addEventListener('click', () => {
-        activePath = 'products';
-        window.scrollTo({
-            top: 2 * window.innerHeight,
-            behavior: 'smooth'
+    // "Ürünlerimizi İncele" button -> activePath = 'products', scroll to bottom
+    if (btnProducts) {
+        btnProducts.addEventListener('click', () => {
+            activePath = 'products';
+            window.scrollTo({
+                top: 3 * window.innerHeight,
+                behavior: 'smooth'
+            });
         });
-    });
+    }
 
     // "Tasarım Baskı" button -> activePath = 'design', scroll to bottom
     if (btnDesign) {
         btnDesign.addEventListener('click', () => {
             activePath = 'design';
             window.scrollTo({
-                top: 2 * window.innerHeight,
+                top: 3 * window.innerHeight,
                 behavior: 'smooth'
             });
         });
@@ -457,7 +464,7 @@ function setupUI() {
 
     // Reset path to main if user scrolls back up to the main menu area
     window.addEventListener('scroll', () => {
-        if (window.scrollY <= window.innerHeight * 1.1) {
+        if (window.scrollY <= window.innerHeight * 1.7) {
             activePath = 'main';
         }
     });
@@ -669,7 +676,7 @@ function morphToModel(geometry, step = 'material') {
     // Create or update the solid mesh representation
     if (!solidMesh) {
         const meshMat = new THREE.MeshStandardMaterial({
-            color: 0x00ffff,
+            color: 0x38bdf8, // Corporate blue highlight
             roughness: 0.25,
             metalness: 0.1,
             transparent: true,
@@ -855,16 +862,25 @@ function animate() {
     
     // Smooth scroll interpolation (Lerp) with physics inertia
     currentScroll += (targetScroll - currentScroll) * 0.08;
-    const maxScroll = 2 * h; // scrollHeight is 300vh, so scrollable range is 200vh (2 viewports)
+    const maxScroll = 3 * h; 
     const clampedScroll = Math.max(0, Math.min(maxScroll, currentScroll));
 
     const sceneMain = document.getElementById('scene-main');
     const sceneUpload = document.getElementById('scene-upload');
+    const sceneProducts = document.getElementById('scene-products');
+    const sceneFooter = document.getElementById('scene-footer');
+    const sceneDesign = document.getElementById('scene-design');
     const dropText = document.getElementById('drop-text');
 
     let baseY = 0;
 
-    // THREE SCROLLING PHASES (ZONES)
+    // Fade out onboarding text
+    const onboardingText = document.getElementById('onboarding-text');
+    if (onboardingText) {
+        onboardingText.style.opacity = Math.max(0, 1 - (clampedScroll / (h * 0.3)));
+    }
+
+    // SCROLLING PHASES (ZONES)
     if (clampedScroll < h) {
         // ---- ZONE 1: Play image sequence (0 to 1 viewport scroll) ----
         const scrollPercent = Math.max(0, Math.min(1, clampedScroll / h));
@@ -904,13 +920,13 @@ function animate() {
         }
 
         // Fade in landing page particles and main UI scene
-        particles.material.opacity = subScroll * 0.6;
+        particles.material.opacity = subScroll * 1.0;
         if (sceneMain) {
             sceneMain.style.opacity = subScroll;
-            sceneMain.classList.add('active');
+            if(subScroll > 0) sceneMain.classList.add('active');
         }
-        if (sceneUpload) { sceneUpload.style.opacity = 0; sceneUpload.classList.remove('active'); }
-        if (sceneProducts) { sceneProducts.style.opacity = 0; sceneProducts.classList.remove('active'); }
+        if (sceneUpload && sceneUpload.style.opacity !== '0') { sceneUpload.style.opacity = 0; sceneUpload.classList.remove('active'); }
+        if (sceneProducts && sceneProducts.style.opacity !== '0') { sceneProducts.style.opacity = 0; sceneProducts.classList.remove('active'); }
         if (sceneFooter) { sceneFooter.style.opacity = 0; sceneFooter.classList.remove('active'); }
 
         // Continuous mathematical interpolation: nozzle -> sphere shape!
@@ -926,20 +942,42 @@ function animate() {
         baseX = 0;
         baseY = 0;
 
+    } else if (clampedScroll >= 1.4 * h && clampedScroll < 2.0 * h) {
+        // ---- ZONE 2.5: RESTING ZONE (1.4 to 2.0 scroll) ----
+        // Menu stays perfectly visible. Particles stay as sphere.
+        if (introCanvas) introCanvas.style.opacity = 0;
+        particles.material.opacity = 1.0;
+        
+        if (sceneMain) {
+            sceneMain.style.opacity = 1.0;
+            sceneMain.classList.add('active');
+        }
+        
+        // Ensure other scenes are hidden
+        if (sceneUpload && sceneUpload.style.opacity !== '0') { sceneUpload.style.opacity = 0; sceneUpload.classList.remove('active'); }
+        if (sceneProducts && sceneProducts.style.opacity !== '0') { sceneProducts.style.opacity = 0; sceneProducts.classList.remove('active'); }
+        if (sceneFooter && sceneFooter.style.opacity !== '0') { sceneFooter.style.opacity = 0; sceneFooter.classList.remove('active'); }
+        if (sceneDesign && sceneDesign.style.opacity !== '0') { sceneDesign.style.opacity = 0; sceneDesign.classList.remove('active'); }
+
+        currentShape = 'sphere';
+        baseX = 0; baseY = 0;
+        for (let i = 0; i < particleCount; i++) {
+            originalTargetPositions[i * 3] = sphereTargets[i * 3];
+            originalTargetPositions[i * 3 + 1] = sphereTargets[i * 3 + 1];
+            originalTargetPositions[i * 3 + 2] = sphereTargets[i * 3 + 2];
+        }
+
     } else {
-        // ---- ZONE 3: Transition to workspace / upload (1.4 to 2.0 scroll) ----
-        const subScroll = Math.max(0, Math.min(1, (clampedScroll - 1.4 * h) / (0.6 * h)));
+        // ---- ZONE 3: Transition to workspace / upload (2.0 to 3.0 scroll) ----
+        const subScroll = Math.max(0, Math.min(1, (clampedScroll - 2.0 * h) / (1.0 * h)));
 
         if (introCanvas) introCanvas.style.opacity = 0;
 
         // Keep particles fully visible
-        particles.material.opacity = isWater ? 0.6 : 0.08;
+        particles.material.opacity = isWater ? 1.0 : 0.25;
 
         // Determine correct end targets and camera translation based on selected path
         let endTargets;
-        
-        const sceneProducts = document.getElementById('scene-products');
-        const sceneFooter = document.getElementById('scene-footer');
 
         if (activePath === 'upload') {
             endTargets = modelTargets ? modelTargets : uploadTargets;
@@ -977,12 +1015,11 @@ function animate() {
             else sceneMain.classList.add('active');
         }
 
-        // Hide all inactive path scenes
-        if (sceneUpload) { sceneUpload.style.opacity = 0; sceneUpload.classList.remove('active'); }
-        if (sceneProducts) { sceneProducts.style.opacity = 0; sceneProducts.classList.remove('active'); }
-        if (sceneFooter) { sceneFooter.style.opacity = 0; sceneFooter.classList.remove('active'); }
-        const sceneDesign = document.getElementById('scene-design');
-        if (sceneDesign) { sceneDesign.style.opacity = 0; sceneDesign.classList.remove('active'); }
+        // Hide all inactive path scenes efficiently
+        if (sceneUpload && activePath !== 'upload' && sceneUpload.style.opacity !== '0') { sceneUpload.style.opacity = 0; sceneUpload.classList.remove('active'); }
+        if (sceneProducts && activePath !== 'products' && sceneProducts.style.opacity !== '0') { sceneProducts.style.opacity = 0; sceneProducts.classList.remove('active'); }
+        if (sceneFooter && activePath !== 'main' && sceneFooter.style.opacity !== '0') { sceneFooter.style.opacity = 0; sceneFooter.classList.remove('active'); }
+        if (sceneDesign && activePath !== 'design' && sceneDesign.style.opacity !== '0') { sceneDesign.style.opacity = 0; sceneDesign.classList.remove('active'); }
 
         // Fade in active scene
         const targetScene = activePath === 'upload' ? sceneUpload : (activePath === 'products' ? sceneProducts : (activePath === 'design' ? sceneDesign : sceneFooter));
