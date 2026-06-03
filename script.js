@@ -318,7 +318,7 @@ function createParticles() {
 function setupDragInteraction() {
     window.addEventListener('mousedown', (e) => {
         // If clicking on an interactive UI element, do not drag
-        const isInteractive = e.target.closest('button, select, input, .content-box, .controls, #drop-zone, .premium-toast');
+        const isInteractive = e.target.closest('button, select, input, .content-box, .controls, #drop-zone, .premium-toast, .price-display');
         if (isInteractive) return;
 
         isDragging = true;
@@ -462,9 +462,9 @@ function setupUI() {
         });
     }
 
-    // Reset path to main if user scrolls back up to the main menu area
+    // Reset path to main ONLY if user scrolls back up to near the top (Zone 1 intro area)
     window.addEventListener('scroll', () => {
-        if (window.scrollY <= window.innerHeight * 1.7) {
+        if (window.scrollY <= window.innerHeight * 0.5) {
             activePath = 'main';
         }
     });
