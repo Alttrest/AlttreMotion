@@ -1,1 +1,5 @@
-<div align="center">\n  <a href="https://github.com/Alttrest/AlttreMotion">\n    <img src="readme.svg" alt="AlttreMotion" width="100%"/>\n  </a>\n</div>\n
+<p align="center">
+  <a href="https://github.com/Alttrest/AlttreMotion">
+    <img src="readme.svg" width="100%" alt="AlttreMotion - Interactive Architecture &amp; Visual Identity" />
+  </a>
+</p>
